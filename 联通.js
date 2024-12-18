@@ -9,19 +9,20 @@
 // -------------------------------------------------------
 // 是否是开发环境，配合手机端调试使用，正式发布设置为false
 const isDev = false;
-const dependencyLSP = "20230511";
+const dependencyLSP = "20241218";
 console.log(`当前环境 👉👉👉👉👉 ${isDev ? "DEV" : "RELEASE"}`);
 console.log(`----------------------------------------`);
 // 分支
-const branch = "v2";
+const branch = 'main';
 // 仓库根目录
-const remoteGithubRoot = `https://raw.githubusercontent.com/Enjoyee/Scriptable/${branch}`;
-const remoteHomeLandRoot = `https://glimmerk.coding.net/p/Scriptable/shared-depot/source/git/raw/${branch}`;
+const remoteGithubRoot = `https://raw.githubusercontent.com/isoooook/Scriptables/${branch}`
+
 // 依赖包目录
 const fm = FileManager.local();
 const rootDir = fm.documentsDirectory();
 const cacheDir = fm.joinPath(rootDir, "LSP");
 const dependencyFileName = isDev ? "_LSP.js" : `${cacheDir}/_LSP.js`;
+
 // 下载依赖包
 await downloadLSPDependency();
 // -------------------------------------------------------
@@ -41,6 +42,7 @@ class Widget extends BaseWidget {
     descNightColor: "#999999",
     refreshTimeDayColor: "#000000",
     refreshTimeNightColor: "#999999",
+    cookieBoxJsKey: "@YaYa_10010.cookie",
   };
 
   fee = {
@@ -81,26 +83,22 @@ class Widget extends BaseWidget {
     this.backgroundColor = "#FEFCF3,#0A2647";
     this.cookie = this.getValueByKey("cookie");
   }
+
   cleanCookieStr(str) {
-    return String(str)
-      .split(";")
-      .map((i) => {
-        return i
-          .trim()
-          .replace(
-            /(^Domain\s*?=\s*?.+?$|^Path\s*?=\s*?.+?\s*?(,\s*|$))/gi,
-            ""
-          );
+    return String(str).split(";").map((i) => {
+        return i.trim().replace(/(^Domain\s*?=\s*?.+?$|^Path\s*?=\s*?.+?\s*?(,\s*|$))/gi,"");
       })
       .filter((i) => i)
       .join("; ");
   }
+  /**
+   * 获取cookie
+   * @returns 
+   */
   getCookie = async () => {
     const getBoxjsData = async () => {
       try {
-        const req = new Request(
-          "https://boxjs.com/query/data/@YaYa_10010.cookie"
-        );
+        const req = new Request(`https://boxjs.com/query/data/${this.cookieBoxJsKey}`);
         req.timeoutInterval = 10;
         req.method = "GET";
         const res = await req.loadJSON();
@@ -111,7 +109,7 @@ class Widget extends BaseWidget {
     };
     const [boxjsData] = await Promise.all([getBoxjsData()]);
     if (boxjsData) {
-      console.log(`使用 boxjs 缓存数据`);
+      console.log(`使用 boxJS 缓存数据`);
       return this.cleanCookieStr(boxjsData);
     }
   };
@@ -129,7 +127,7 @@ class Widget extends BaseWidget {
           name: "boxJsUnicomCK",
           label: "BoxJS代理",
           type: "cell",
-          icon: "https://raw.githubusercontent.com/githubdulong/Script/master/Images/boxjs.png",
+          icon: `${this.getRemoteRootPath()}/icon/boxjs.png`,
           needLoading: true,
           desc: this.getValueByKey("cookie")?.length > 0 ? "已填写" : "未填写",
         },
@@ -137,7 +135,7 @@ class Widget extends BaseWidget {
           name: "otherSetting",
           label: "其他设置",
           type: "cell",
-          icon: "https://cdnjson.com/images/2024/02/05/settings.png",
+          icon: `${this.getRemoteRootPath()}/icon/setting.gif`,
           needLoading: true,
           childItems: [
             {
@@ -206,10 +204,7 @@ class Widget extends BaseWidget {
       // cell类型的item点击回调
       onItemClick: async (item) => {
         const widgetSetting = this.readWidgetSetting();
-        let insertDesc =
-          widgetSetting.phone?.length > 0 && widgetSetting.cookie?.length > 0
-            ? "已填写"
-            : "未填写";
+        let insertDesc = widgetSetting.phone?.length > 0 && widgetSetting.cookie?.length > 0 ? "已填写" : "未填写";
         let phone;
         let ck;
         switch (item.name) {
@@ -222,16 +217,13 @@ class Widget extends BaseWidget {
               // 保存配置
               widgetSetting["phone"] = phone;
               widgetSetting["cookie"] = ck;
-              await this.generateAlert("提示", "BoxJs缓存数据获取成功", [
-                "好的",
-              ]);
+              await this.generateAlert("提示", "BoxJs缓存数据获取成功", ["好的",]);
             } else {
               this.notify("联通小组件", `请更新BoxJs缓存~`);
             }
 
             this.cookie = widgetSetting.cookie;
-            insertDesc =
-              phone?.length > 0 && ck?.length > 0 ? "已填写" : "未填写";
+            insertDesc = phone?.length > 0 && ck?.length > 0 ? "已填写" : "未填写";
             this.writeWidgetSetting({ ...widgetSetting });
             break;
         }
@@ -256,9 +248,7 @@ class Widget extends BaseWidget {
     // ========================================
     const widgetSize = this.getWidgetSize("小号");
     let stack = widget.addStack();
-    let image = await this.getImageByUrl(
-      `${this.getRemoteRootPath()}/img/bg_doraemon_1.png`
-    );
+    let image = await this.getImageByUrl(`${this.getRemoteRootPath()}/img/bg_doraemon_1.png`);
     stack.setPadding(4, 12, 0, 12);
     stack.backgroundImage = image;
     stack.size = new Size(widgetSize.width, widgetSize.height);
@@ -342,9 +332,7 @@ class Widget extends BaseWidget {
     textSpan.textColor = refreshTimeTextColor;
     textSpan.font = Font.lightSystemFont(10);
     btStack.addSpacer();
-    image = await this.getImageByUrl(
-      `${this.getRemoteRootPath()}/img/ic_logo_10010.png`
-    );
+    image = await this.getImageByUrl(`${this.getRemoteRootPath()}/img/ic_logo_10010.png`);
     imgSpan = btStack.addImage(image);
     imgSpan.imageSize = new Size(14, 14);
     stack.addSpacer();
@@ -378,8 +366,7 @@ class Widget extends BaseWidget {
         dataSuccess: (res) => res.code == "Y",
         headers: {
           Host: "m.client.10010.com",
-          "User-Agent":
-            "ChinaUnicom.x CFNetwork iOS/16.3 unicom{version:iphone_c@10.0100}",
+          "User-Agent": "ChinaUnicom.x CFNetwork iOS/16.3 unicom{version:iphone_c@10.0100}",
           cookie: this.cookie,
         },
       }
@@ -425,34 +412,29 @@ await new Widget(Script.name()).run();
 
 // =================================================================================
 // =================================================================================
+/**
+ * 下载依赖
+ * @returns 
+ */
 async function downloadLSPDependency() {
   let fm = FileManager.local();
-  const fileName = fm.joinPath(
-    fm.documentsDirectory(),
-    `LSP/${Script.name()}/settings.json`
-  );
+  const fileName = fm.joinPath(fm.documentsDirectory(),`LSP/${Script.name()}/settings.json`);
   const fileExists = fm.fileExists(fileName);
   let cacheString = "{}";
   if (fileExists) {
     cacheString = fm.readString(fileName);
   }
-  const use_github = JSON.parse(cacheString)["use_github"];
-  const dependencyURL = `${
-    use_github ? remoteGithubRoot : remoteHomeLandRoot
-  }/_LSP.js`;
+  //const use_github = JSON.parse(cacheString)["use_github"];
+  const dependencyURL = `${remoteGithubRoot}/_LSP.js`;
   const update = needUpdateDependency();
   if (isDev) {
     const iCloudPath = FileManager.iCloud().documentsDirectory();
-    const localIcloudDependencyExit = fm.isFileStoredIniCloud(
-      `${iCloudPath}/_LSP.js`
-    );
+    const localIcloudDependencyExit = fm.isFileStoredIniCloud(`${iCloudPath}/_LSP.js`);
     const localDependencyExit = fm.fileExists(`${rootDir}/_LSP.js`);
     const fileExist = localIcloudDependencyExit || localDependencyExit;
     console.log(`🚀 DEV开发依赖文件${fileExist ? "已存在 ✅" : "不存在 🚫"}`);
     if (!fileExist || update) {
-      console.log(
-        `🤖 DEV 开始${update ? "更新" + dependencyLSP : "下载"}依赖~`
-      );
+      console.log(`🤖 DEV 开始${update ? "更新" + dependencyLSP : "下载"}依赖~`);
       keySave("VERSION", dependencyLSP);
       await downloadFile2Scriptable("_LSP", dependencyURL);
     }
@@ -462,9 +444,7 @@ async function downloadLSPDependency() {
   //////////////////////////////////////////////////////////
   console.log(`----------------------------------------`);
   const remoteDependencyExit = fm.fileExists(`${cacheDir}/_LSP.js`);
-  console.log(
-    `🚀 RELEASE依赖文件${remoteDependencyExit ? "已存在 ✅" : "不存在 🚫"}`
-  );
+  console.log(`🚀 RELEASE依赖文件${remoteDependencyExit ? "已存在 ✅" : "不存在 🚫"}`);
   // ------------------------------
   if (!remoteDependencyExit || update) {
     // 下载依赖
@@ -531,17 +511,29 @@ async function downloadFile2Scriptable(moduleName, url) {
 
 /**
  * 是否需要更新依赖版本
+ * @returns 
  */
 function needUpdateDependency() {
   return dependencyLSP != keyGet("VERSION");
 }
 
+/**
+ * 
+ * @param {*} cacheKey 
+ * @param {*} cache 
+ */
 function keySave(cacheKey, cache) {
   if (cache) {
     Keychain.set(Script.name() + cacheKey, cache);
   }
 }
 
+/**
+ * 
+ * @param {*} cacheKey 
+ * @param {*} defaultValue 
+ * @returns 
+ */
 function keyGet(cacheKey, defaultValue = "") {
   if (Keychain.contains(Script.name() + cacheKey)) {
     return Keychain.get(Script.name() + cacheKey);

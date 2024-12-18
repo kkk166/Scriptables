@@ -1,4 +1,5 @@
 // Variables used by Scriptable.
+
 // These must be at the very top of the file. Do not edit.
 // icon-color: gray; icon-glyph: user-astronaut;
 /**
@@ -12,13 +13,13 @@ const VERSION = 20241218
 // 组件配置文件名
 const settingConfigName = 'settings.json';
 // 分支
-const branch = 'v2';
+const branch = 'main';
 // 仓库根目录
-const remoteGithubRoot = `https://raw.githubusercontent.com/Enjoyee/Scriptable/${branch}`;
-const remoteHomeLandRoot = `https://glimmerk.coding.net/p/Scriptable/shared-depot/source/git/raw/${branch}`;
-const gitHubRoot = `https://raw.githubusercontent.com/isoooook/Scriptables/refs/heads/main/README.md`
-// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+const remoteGithubRoot = `https://raw.githubusercontent.com/isoooook/Scriptables/${branch}`
+
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 class BaseWidget {
 
   // 组件默认配置
@@ -46,8 +47,6 @@ class BaseWidget {
     const { use_github = this.defaultConfig.useGithub } = this.readWidgetSetting();
     if (use_github) {
       return remoteGithubRoot;
-    } else {
-      return remoteHomeLandRoot;
     }
   }
 
