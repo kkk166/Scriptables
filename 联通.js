@@ -76,6 +76,8 @@ class Widget extends BaseWidget {
   refreshTimeDayColor = () => this.getValueByKey("refreshTimeDayColor");
   refreshTimeNightColor = () => this.getValueByKey("refreshTimeNightColor");
 
+  cookieBoxJsKey = () => this.getValueByKey("cookieBoxJsKey");
+  
   constructor(scriptName) {
     super(scriptName);
     this.reset = false;
