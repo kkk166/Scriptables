@@ -15,7 +15,7 @@ console.log(`----------------------------------------`);
 // 分支
 const branch = 'main';
 // 仓库根目录
-const remoteGithubRoot = `https://raw.githubusercontent.com/isoooook/Scriptables/${branch}`
+const remoteGithubRoot = `https://raw.githubusercontent.com/kkk166/Scriptables/${branch}`
 
 // 依赖包目录
 const fm = FileManager.local();
