@@ -75,8 +75,6 @@ class Widget extends BaseWidget {
 
   refreshTimeDayColor = () => this.getValueByKey("refreshTimeDayColor");
   refreshTimeNightColor = () => this.getValueByKey("refreshTimeNightColor");
-
-  cookieBoxJsKey = () => this.getValueByKey("cookieBoxJsKey");
   
   constructor(scriptName) {
     super(scriptName);
@@ -100,7 +98,7 @@ class Widget extends BaseWidget {
   getCookie = async () => {
     const getBoxjsData = async () => {
       try {
-        const req = new Request(`https://boxjs.com/query/data/${this.cookieBoxJsKey}`);
+        const req = new Request(`https://boxjs.com/query/data/${this.defaultPreference.cookieBoxJsKey}`);
         req.timeoutInterval = 10;
         req.method = "GET";
         const res = await req.loadJSON();
